@@ -3,6 +3,8 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
 const Body = Matter.Body;
 const Constraint = Matter.Constraint;
+const MouseConstraint = Matter.MouseConstraint;
+const Mouse = Matter.Mouse;
 
 var engine, world;
 var newtonbg;
@@ -16,11 +18,11 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(1200, 600);
+    var canvas = createCanvas(1200, 600);
     engine = Engine.create();
     world = engine.world;
 
-    ground = new fixed(420, 590, 840, 50, groundImg);
+    ground = new fixed(width / 2, 590, width, 50, groundImg);
     roof = new fixed(400, 50, 600, 100, roofImg);
     bob1 = new Pendulum(200, 406, 50);
     rope1 = new rope(bob1.body, roof.body, {
@@ -47,8 +49,16 @@ function setup() {
         x: 600,
         y: roof.body.position.y
     });
-
     Engine.run(engine);
+
+    // adding mouse constraint 
+    var canvasmouse = Mouse.create(canvas.elt);
+    canvasmouse.pixelRatio = pixelDensity();
+    var options = {
+        mouse: canvasmouse
+    }
+    mConstraint = MouseConstraint.create(engine, options);
+    World.add(world, mConstraint);
 }
 
 function draw() {
@@ -66,25 +76,13 @@ function draw() {
     bob4.display();
     rope5.display();
     bob5.display();
-    fill(random(50,250),0,random(50,250))
+    fill(random(50, 250), 0, random(50, 250))
     textSize(48);
-    text("NEWTON'S CRADLE",200,550);
-}
-
-function keyPressed() {
-    if (keyCode == UP_ARROW) {
-        Body.applyForce(bob1.body, bob1.body.position, {
-            x: -0.5,
-            y: -0.5
-        });
-    } else if (keyCode == DOWN_ARROW) {
-        Body.applyForce(bob1.body, bob1.body.position, {
-            x: -0.5,
-            y: -0.5
-        });
-        Body.applyForce(bob2.body, bob2.body.position, {
-            x: -0.5,
-            y: -0.5
-        });
+    text("NEWTON'S CRADLE", 200, 550);
+    if (mConstraint.body) {
+        var pos = mConstraint.body.position;
+        var m = mConstraint.mouse.position;
+        stroke(0, 255, 0);
+        line(pos.x, pos.y, m.x, m.y);
     }
 }

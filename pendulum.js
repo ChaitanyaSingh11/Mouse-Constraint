@@ -1,13 +1,12 @@
 class Pendulum {
     constructor(x, y, r) {
-        var options =  {
-            restitution:1
+        var options = {
+            restitution: 1
         }
-        this.body = Bodies.circle(x, y, r,options);
+        this.body = Bodies.circle(x, y, r, options);
         this.r = r;
         this.image = loadImage("Assets/ball.png");
         World.add(world, this.body);
-        console.log(this.body);
     }
     display() {
         var pos = this.body.position;
